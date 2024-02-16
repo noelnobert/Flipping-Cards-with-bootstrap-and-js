@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipping Cards with Range Slider</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap">
+    <style>
+        .card-container {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            margin-top: 50px;
+            gap: 40px;
+        }
+        
+        .card {
+            width: 300px;
+            height: 515px;
+            perspective: 1000px;
+            z-index: 10;
+            padding: 1em;
+            border-radius: 27px;
+            transition: transform 0.5s;
+            border: 2px solid #ccccce;
+            box-shadow: 0 5px 30px rgba(4, 5, 46, 0.1);
+            text-align: center;
+        }
+        
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+        
+        .card-front {
+            /* background-color: #f8f9fa; */
+            display: flex;
+            align-items: start;
+            justify-content: center;
+        }
+        
+        .card-back {
+            /* background-color: #007bff; */
+            color: #fff;
+            display: flex;
+            align-items: start;
+            justify-content: center;
+            transform: rotateY(180deg);
+        }
+        /* Range Slider Styles */
+        
+        .range-slider-container {
+            text-align: center;
+            position: relative;
+            margin-top: 60px !important;
+            width: 80%;
+            margin: auto;
+        }
+        
+        .range-slider {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .slider-number {
+            position: absolute;
+            top: -30px;
+            cursor: pointer;
+        }
+        
+        .slider-number:nth-child(1) {
+            left: 0%;
+        }
+        
+        .slider-number:nth-child(2) {
+            left: 33.3%;
+        }
+        
+        .slider-number:nth-child(3) {
+            left: 66.6%;
+        }
+        
+        .slider-number:nth-child(4) {
+            right: 0%;
+        }
+        
+        .slider-number:hover {
+            color: blue;
+        }
+        
+        img {
+            width: 100%;
+        }
+        
+        .card-inner h3 {
+            font-size: 27px;
+            color: #145199;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 10px;
+        }
+        
+        .card-inner p {
+            color: #293D53;
+            line-height: 1.5em;
+            margin: 0;
+            padding: 0 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .card-icon {
+            width: 80px;
+            margin-top: -50px;
+        }
+        
+        .card-counter {
+            position: fixed;
+            top: 1%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 49px;
+            border-radius: 29px;
+            z-index: 1000;
+            border: 2px solid rgb(242, 238, 238);
+        }
+        
+        #rangeSlider {
+            display: none;
+        }
+        /* Media Query for Tablet and Mobile Landscape */
+        
+        @media screen and (max-width: 1024px) {
+            .card-container {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                gap: 20px;
+            }
+            .card-inner h3 {
+                font-size: 22px;
+            }
+            .card {
+                padding: 1em 10px 10px;
+                border-radius: 22px;
+                height: 540px;
+            }
+            .range-slider-container {
+                margin-top: 120px !important;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .card-container {
+                width: 1000px;
+            }
+            #card4 {
+                margin-right: 35px;
+            }
+            .range-slider-container {
+                width: 100%;
+                margin: 0 auto;
+                left: 16%;
+            }
+            .range-slider {
+                width: 110%;
+                transform: translateX(0%);
+                right: 0;
+                left: 0;
+                margin: 0 auto;
+            }
+            .slider-number:nth-child(2) {
+                left: 36.3%;
+            }
+            .slider-number:nth-child(3) {
+                left: 72.2%;
+            }
+            .slider-number:nth-child(4) {
+                right: -9.5%;
+            }
+            .card-icon {
+                width: 65px;
+            }
+        }
+        
+        @media screen and (max-width: 736px) {
+            .container,
+            .container-sm {
+                max-width: 740px;
+            }
+            #card4 {
+                margin-right: 15px;
+            }
+        }
+        
+        @media screen and (max-width: 667px) {
+            .range-slider {
+                width: 120%;
+            }
+            .slider-number:nth-child(2) {
+                left: 39.8%;
+            }
+            .slider-number:nth-child(3) {
+                left: 79%;
+            }
+            .slider-number:nth-child(4) {
+                right: -19.5%;
+            }
+        }
+        
+        @media screen and (max-width: 428px) {
+            #slider {
+                display: none;
+            }
+            #rangeSlider {
+                display: block;
+            }
+            .range-slider {
+                width: 100%;
+                background: #ccc;
+                outline: none;
+                border: none;
+                border-radius: 5px;
+            }
+            .container,
+            .container-sm {
+                max-width: 95%;
+            }
+            .card-container {
+                width: 85%;
+                flex-wrap: wrap;
+                justify-content: end;
+                float: right;
+                margin-top: 90px;
+            }
+            #card4 {
+                margin-right: 0;
+            }
+            .card {
+                height: 500px;
+            }
+            .range-slider-container {
+                left: 0;
+            }
+            .card-inner h3 {
+                font-size: 28px;
+            }
+            .range-slider-container {
+                transform: rotate(90deg);
+                transform-origin: left top;
+                position: absolute;
+                top: 42%;
+                left: 38%;
+                height: 20px;
+                margin-top: 0% !important;
+                margin-left: -100px;
+                bottom: 0%;
+                width: 1650px;
+                padding: 31px 0px;
+            }
+            .slider-number {
+                /* Adjust the styles of slider numbers as needed for vertical display */
+                transform: rotate(-90deg);
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                cursor: pointer;
+                position: absolute;
+            }
+            .slider-number:nth-child(1) {
+                top: 16.6%;
+                left: 0%;
+                bottom: 0;
+            }
+            .slider-number:nth-child(2) {
+                top: 16.6%;
+                left: 32.7%;
+                bottom: 0;
+            }
+            .slider-number:nth-child(3) {
+                top: 16.6%;
+                left: 65.7%;
+                bottom: 0;
+            }
+            .slider-number:nth-child(4) {
+                right: 0px;
+                top: 32px;
+            }
+            .card-icon {
+                width: 75px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                /* Adjust the width as needed */
+                height: 20px;
+                /* Adjust the height as needed */
+                background-color: #145199;
+                /* Set the background color */
+                border: 2px solid #145199;
+                /* Set the border properties */
+                border-radius: 50%;
+                /* Make it round */
+                cursor: pointer;
+                /* Add cursor pointer */
+            }
+        }
+        
+        @media screen and (max-width: 414px) {}
+        
+        @media screen and (max-width: 360px) {
+            .range-slider-container {
+                top: 42%;
+                left: 42%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="range-slider-container">
+            <span class="slider-number" data-position="1">1</span>
+            <span class="slider-number" data-position="2">2</span>
+            <span class="slider-number" data-position="3">3</span>
+            <span class="slider-number" data-position="4">4</span>
+            <br>
+            <input type="range" class="form-range range-slider" min="1" max="4" value="1" id="slider" step="any">
+            <input type="range" class="form-range range-slider" min="1" max="4" value="1" id="rangeSlider" oninput="updateCardFlip()">
+
+            <!-- <input type="range" class="form-range range-slider" min="1" max="4" value="1" id="slider" orient="vertical"> -->
+
+        </div>
+        <div class="card-counter" id="cardNumberText"></div>
+        <div class="card-container">
+            <div class="card flipped" id="card1">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="card-front-inner">
+                            <img src="images/WEB-BANNER-SEO-01-1.png">
+                            <img src="images/WEB-BANNER-SEO-03-1.png" class="card-icon">
+                            <h3>SAVE AD<br> SPENDING</h3>
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-back-inner">
+                            <img src="images/WEB-BANNER-SEO-01-1.png">
+                            <img src="images/WEB-BANNER-SEO-03-1.png" class="card-icon">
+                            <h3>SAVE AD<br> SPENDING</h3>
+                            <p>Fed up with ad expenses? Opt for our SEO expertise. Get written articles that help increase organic traffic and deliver SERP Ranking that lasts. Enhance your ROI with our SEO services, maximizing returns while minimizing costs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="card2">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="card-front-inner">
+                            <img src="images/WEB-BANNER-SEO-01.png">
+                            <img src="images/Calming-ICON-01-1.png" class="card-icon">
+                            <h3>INCREASE USER ENGAGEMENT</h3>
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-back-inner">
+                            <img src="images/WEB-BANNER-SEO-01.png">
+                            <img src="images/Calming-ICON-01-1.png" class="card-icon">
+                            <h3>INCREASE USER ENGAGEMENT</h3>
+                            <p>Receive content that acts as currency, engaging your audience and converting them into loyal customers. Our tailored SEO solutions expand your reach globally while maintaining local relevance, converting clicks into profitable
+                                customer relationships.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="card3">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="card-front-inner">
+                            <img src="images/WEB-BANNER-SEO-02.png">
+                            <img src="images/Calming-ICON-02-1.png" class="card-icon">
+                            <h3>CLIMB SEARCH RANKING</h3>
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-back-inner">
+                            <img src="images/WEB-BANNER-SEO-02.png">
+                            <img src="images/Calming-ICON-02-1.png" class="card-icon">
+                            <h3>CLIMB SEARCH RANKING</h3>
+                            <p>Harness the power of keywords to uncover customer desires and drive business growth. Establish brand authority and position your business as the industryz expert by climbing SERPs. We help you Stay ahead of the competition
+                                by making data-driven decisions and tapping into new opportunities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="card4">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="card-front-inner">
+                            <img src="images/WEB-BANNER-SEO-03.png">
+                            <img src="images/Calming-ICON-03-1.png" class="card-icon">
+                            <h3>FUTURE PROOF YOUR BUSINESS</h3>
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-back-inner">
+                            <img src="images/WEB-BANNER-SEO-03.png">
+                            <img src="images/Calming-ICON-03-1.png" class="card-icon">
+                            <h3>FUTURE PROOF YOUR BUSINESS</h3>
+                            <p>Partner with us to future-proof your business. Whether it’s content writing or copywriting, our SEO expertise will help build long-term growth and relevance in the digital age.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var totalCards = $(".card").length; // Get the total number of cards
+
+            // Function to update the card counter
+            function updateCardCounter(currentCard) {
+                currentCard = Math.round(currentCard); // Round to the nearest integer
+                $(".card-counter").text(currentCard + "/" + totalCards); // Update the card counter text
+                $(".card").removeClass("flipped"); // Reset all cards to their original state
+                // Open cards up to the fourth one, then close in reverse
+                $(".card").slice(0, currentCard <= 4 ? currentCard : 8 - currentCard).addClass("flipped");
+            }
+
+            // Slider change event
+            function handleSliderChange(value) {
+                // Update card number text
+                updateCardCounter(value);
+            }
+
+            // Handle mouse events
+            $("#slider, #rangeSlider").on('input', function() {
+                handleSliderChange($(this).val());
+            });
+
+            // Handle touch events
+            $("#slider, #rangeSlider").on('touchmove', function(e) {
+                var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+                var rect = this.getBoundingClientRect();
+                var position = (touch.clientX - rect.left) / rect.width;
+                var value = position * ($(this).attr('max') - $(this).attr('min')) + parseInt($(this).attr('min'));
+                handleSliderChange(value);
+            });
+
+            // Click event for slider numbers
+            $(".slider-number").click(function() {
+                var position = $(this).data("position");
+                // Set slider value to corresponding position
+                $("#slider, #rangeSlider").val(position);
+                handleSliderChange(position);
+            });
+
+            // Initial card counter update
+            updateCardCounter($("#slider, #rangeSlider").val());
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let cardContainer = document.getElementById("cardContainer");
+            let rangeSlider = document.getElementById("rangeSlider");
+            let cardNumberText = document.getElementById("cardNumberText");
+
+            rangeSlider.addEventListener("input", updateCardFlip);
+
+            function updateCardFlip() {
+                let value = parseInt(rangeSlider.value);
+                let cards = document.querySelectorAll(".card");
+
+                cards.forEach(function(card, index) {
+                    if (index + 1 <= value) {
+                        card.classList.add("open");
+                    } else {
+                        card.classList.remove("open");
+                    }
+                });
+
+                // Update card number text
+                cardNumberText.innerText = `${value}/${cards.length}`;
+            }
+
+            updateCardFlip();
+        });
+
+        $(document).ready(function() {
+            $("#rangeSlider").on("input", function() {
+                // Check if the range slider value is equal to 2
+                if ($(this).val() == 1) {
+                    // Check if the viewport width is below a certain threshold (e.g., 768 pixels for mobile devices)
+                    if (window.innerWidth <= 557) {
+                        // Focus on the element with ID "card2"
+                        $("#card1").focus();
+
+                        // Scroll to the top position of the focused element without animation
+                        $('html, body').scrollTop($("#card1").offset().top);
+                    }
+                }
+
+
+                if ($(this).val() == 2) {
+                    // Check if the viewport width is below a certain threshold (e.g., 768 pixels for mobile devices)
+                    if (window.innerWidth <= 557) {
+                        // Focus on the element with ID "card2"
+                        $("#card2").focus();
+
+                        // Scroll to the top position of the focused element without animation
+                        $('html, body').scrollTop($("#card2").offset().top);
+                    }
+                }
+
+
+
+                if ($(this).val() == 3) {
+                    // Check if the viewport width is below a certain threshold (e.g., 768 pixels for mobile devices)
+                    if (window.innerWidth <= 557) {
+                        // Focus on the element with ID "card2"
+                        $("#card3").focus();
+
+                        // Scroll to the top position of the focused element without animation
+                        $('html, body').scrollTop($("#card3").offset().top);
+                    }
+                }
+
+
+                if ($(this).val() == 4) {
+                    // Check if the viewport width is below a certain threshold (e.g., 768 pixels for mobile devices)
+                    if (window.innerWidth <= 557) {
+                        // Focus on the element with ID "card2"
+                        $("#card4").focus();
+
+                        // Scroll to the top position of the focused element without animation
+                        $('html, body').scrollTop($("#card4").offset().top);
+                    }
+                }
+
+
+            });
+        });
+    </script>
+
+</body>
+
+</html>
